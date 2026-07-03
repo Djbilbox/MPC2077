@@ -49,6 +49,7 @@ target_sources(MPC2077 PRIVATE
     Source/UI/Components/PadGrid.cpp
     Source/UI/Components/FxRack.cpp
     Source/UI/Components/PresetBank.cpp
+    Source/UI/Components/SequencerView.cpp
     Source/UI/Components/ModeBar.cpp
     Source/UI/Components/TouchRibbon.cpp
     Source/UI/Components/CityBackdrop.cpp

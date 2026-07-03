@@ -1,11 +1,18 @@
 #include "ModeBar.h"
 #include "../../PluginProcessor.h"
 
+#if MPC_HAS_BINARY_DATA
+ #include "BinaryData.h"
+#endif
+
 using namespace mpc;
 using namespace mpc::theme;
 
 ModeBar::ModeBar (MPC2077AudioProcessor& p) : proc (p)
 {
+   #if MPC_HAS_BINARY_DATA
+    logo = juce::ImageCache::getFromMemory (BinaryData::logo_png, BinaryData::logo_pngSize);
+   #endif
     for (int i = 0; i < 6; ++i)
     {
         pills[i].setButtonText (names[i]);
@@ -43,10 +50,19 @@ void ModeBar::paint (juce::Graphics& g)
     g.setColour (cyan.withAlpha (0.5f));
     g.drawHorizontalLine (getHeight() - 1, 0.0f, r.getWidth());
 
-    // logo "MPC2077" chrome + glitch
-    auto logoArea = juce::Rectangle<int> (16, 8, 300, 42);
+    // real neon camel badge (if embedded)
+    int textX = 16;
+    if (logo.isValid())
+    {
+        const int badge = getHeight() - 8;
+        g.drawImageWithin (logo, 4, 4, badge, badge, juce::RectanglePlacement::centred, false);
+        textX = 4 + badge + 6;
+    }
+
+    // "MPC2077" chrome wordmark + glitch offset
+    auto logoArea = juce::Rectangle<int> (textX, 8, 300, 40);
     const float gj = (std::sin (phase * 6.0f) > 0.9f) ? 3.0f : 0.0f;
-    g.setFont (theme::hud (34.0f, true));
+    g.setFont (theme::hud (32.0f, true));
     g.setColour (pink.withAlpha (0.6f));
     g.drawText ("MPC2077", logoArea.translated ((int) gj, 0), juce::Justification::centredLeft, false);
     g.setColour (cyan.withAlpha (0.6f));
@@ -56,7 +72,7 @@ void ModeBar::paint (juce::Graphics& g)
 
     g.setFont (theme::hud (10.0f, true));
     g.setColour (pink);
-    g.drawText ("by DJBILBOX BEATS", 18, 48, 260, 14, juce::Justification::centredLeft, false);
+    g.drawText ("by DJBILBOX BEATS", textX + 2, 48, 260, 14, juce::Justification::centredLeft, false);
 
     // status top-right
     const float dotAlpha = 0.5f + 0.5f * std::sin (phase * 4.0f);

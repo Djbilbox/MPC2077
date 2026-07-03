@@ -26,6 +26,7 @@ private:
     MPC2077AudioProcessor& proc;
     juce::TextButton pills[6];
     const juce::StringArray names { "CHOP", "SLICE", "BEAT", "SEQ", "GLITCH", "CYBER" };
+    juce::Image logo;
     float phase = 0.0f;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ModeBar)

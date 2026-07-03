@@ -7,6 +7,7 @@
 #include "UI/Components/ControlPanel.h"
 #include "UI/Components/CityBackdrop.h"
 #include "UI/Components/PresetBank.h"
+#include "UI/Components/SequencerView.h"
 #include "UI/Components/PadGrid.h"
 #include "UI/Components/FxRack.h"
 #include "UI/Components/TouchRibbon.h"
@@ -32,6 +33,7 @@ private:
     mpc::ControlPanel controlPanel;
     mpc::CityBackdrop city;
     mpc::PresetBank   presetBank;
+    mpc::SequencerView seqView;
     mpc::PadGrid      padGrid;
     mpc::FxRack       fxRack;
     mpc::TouchRibbon  ribbon;
@@ -42,6 +44,7 @@ private:
     float phase = 0.0f;
     int   lastSelectedPad = -1;
     int   lastProgram = -1;
+    int   lastMode = -1;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MPC2077AudioProcessorEditor)
 };

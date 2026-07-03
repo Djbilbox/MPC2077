@@ -7,7 +7,7 @@ namespace { constexpr int kW = 1000, kH = 770; }
 
 MPC2077AudioProcessorEditor::MPC2077AudioProcessorEditor (MPC2077AudioProcessor& p)
     : AudioProcessorEditor (&p), proc (p),
-      modeBar (p), controlPanel (p), presetBank (p), padGrid (p), fxRack (p), ribbon (p)
+      modeBar (p), controlPanel (p), presetBank (p), seqView (p), padGrid (p), fxRack (p), ribbon (p)
 {
     setLookAndFeel (&lnf);
 
@@ -15,6 +15,7 @@ MPC2077AudioProcessorEditor::MPC2077AudioProcessorEditor (MPC2077AudioProcessor&
     addAndMakeVisible (modeBar);
     addAndMakeVisible (controlPanel);
     addAndMakeVisible (presetBank);
+    addChildComponent (seqView);        // shown only in SEQ mode
     addAndMakeVisible (padGrid);
     addAndMakeVisible (fxRack);
     addAndMakeVisible (ribbon);
@@ -79,13 +80,16 @@ void MPC2077AudioProcessorEditor::paint (juce::Graphics& g)
     g.setColour (cyan.withAlpha (0.35f));
     g.drawRect (center, 1);
 
-    // bank info bar
-    auto bar = juce::Rectangle<int> (206, 388, 594, 28);
-    g.setColour (panelLo.withAlpha (0.85f));
-    g.fillRect (bar);
-    g.setColour (cyan.withAlpha (0.6f));
-    g.setFont (theme::hud (9.5f, true));
-    g.drawText ("BANK A  -  10 PRESETS", bar.withTrimmedLeft (10), juce::Justification::centredLeft, false);
+    // bank info bar (hidden while the sequencer view is up)
+    if (! seqView.isVisible())
+    {
+        auto bar = juce::Rectangle<int> (206, 388, 594, 28);
+        g.setColour (panelLo.withAlpha (0.85f));
+        g.fillRect (bar);
+        g.setColour (cyan.withAlpha (0.6f));
+        g.setFont (theme::hud (9.5f, true));
+        g.drawText ("BANK A  -  10 PRESETS", bar.withTrimmedLeft (10), juce::Justification::centredLeft, false);
+    }
 }
 
 void MPC2077AudioProcessorEditor::resized()
@@ -97,6 +101,7 @@ void MPC2077AudioProcessorEditor::resized()
 
     city.setBounds (202, 80, 602, 602);
     presetBank.setBounds (206, 84, 594, 300);
+    seqView.setBounds (204, 82, 596, 336);
 
     // bank bar buttons (right side of the info bar at y=388)
     auto bar = juce::Rectangle<int> (206, 388, 594, 28);
@@ -124,6 +129,18 @@ void MPC2077AudioProcessorEditor::timerCallback()
 
     const int prog = proc.getCurrentProgram();
     if (prog != lastProgram) { lastProgram = prog; refreshForNewPatch(); }
+
+    // SEQ mode (index 3) swaps the preset list for the step-sequencer editor
+    const int mode = (int) proc.getAPVTS().getRawParameterValue (mpc::pid::mode)->load();
+    if (mode != lastMode)
+    {
+        lastMode = mode;
+        const bool seq = (mode == 3);
+        seqView.setVisible (seq);
+        presetBank.setVisible (! seq);
+        saveBtn.setVisible (! seq); loadBtn.setVisible (! seq); initBtn.setVisible (! seq);
+        repaint();
+    }
 
     modeBar.repaint();
     city.repaint();
