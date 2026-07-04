@@ -60,10 +60,15 @@ void MixerStrip::paint (juce::Graphics& g)
 
 void MixerStrip::resized()
 {
+    // small fixed-size knobs (APESHYT-style tiny mixer row), centred in each column,
+    // with room left below for the pad-name label.
     auto area = getLocalBounds().reduced (6, 2);
     area.removeFromTop (15);
     const int cw = area.getWidth() / kNumPads;
+    const int kd = juce::jlimit (18, 30, juce::jmin (cw - 4, area.getHeight() - 14));
     for (int i = 0; i < kNumPads; ++i)
-        knobs[i].setBounds (juce::Rectangle<int> (area.getX() + i * cw, area.getY(), cw, area.getHeight())
-                                .reduced (3).withTrimmedBottom (11));
+    {
+        juce::Rectangle<int> cell (area.getX() + i * cw, area.getY(), cw, area.getHeight() - 12);
+        knobs[i].setBounds (cell.withSizeKeepingCentre (kd, kd));
+    }
 }

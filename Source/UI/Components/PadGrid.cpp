@@ -42,31 +42,42 @@ void PadGrid::paint (juce::Graphics& g)
         auto b = padBounds (i);
         const float lvl = eng.getPadLevel (i);
         const float fl  = flash[(size_t) i];
-
-        // base
-        g.setColour (panelLo);
-        g.fillRoundedRectangle (b, 5.0f);
-
-        // level glow (cyan)
-        if (lvl > 0.01f)
-        {
-            g.setColour (cyan.withAlpha (juce::jlimit (0.0f, 0.6f, lvl * 0.9f)));
-            g.fillRoundedRectangle (b, 5.0f);
-        }
-        // hit flash (pink)
-        if (fl > 0.01f)
-        {
-            g.setColour (pink.withAlpha (fl * 0.85f));
-            g.fillRoundedRectangle (b, 5.0f);
-        }
-
-        // chrome border
         const bool isSel  = (i == sel);
         const bool isDrag = (i == dragPad);
-        if (isDrag)      { g.setColour (yellow); g.drawRoundedRectangle (b, 5.0f, 2.4f); }
-        else if (isSel)  { g.setColour (pink.withAlpha (0.25f)); g.drawRoundedRectangle (b.expanded (2.0f), 6.0f, 3.0f);
-                           g.setColour (pink); g.drawRoundedRectangle (b, 5.0f, 1.8f); }
-        else             { g.setColour (cyan.withAlpha (0.45f)); g.drawRoundedRectangle (b, 5.0f, 1.0f); }
+        const float rad = 6.0f;
+
+        // contact shadow
+        g.setColour (juce::Colours::black.withAlpha (0.5f));
+        g.fillRoundedRectangle (b.translated (0.0f, 2.0f), rad);
+
+        // glossy 3D beveled body: dark steel with a cyan sheen (top-left lit, bottom-right dark)
+        juce::ColourGradient body (juce::Colour (0xFF1C2430), b.getX(), b.getY(),
+                                   juce::Colour (0xFF07080D), b.getRight(), b.getBottom(), false);
+        body.addColour (0.45, juce::Colour (0xFF12161E));
+        g.setGradientFill (body);
+        g.fillRoundedRectangle (b, rad);
+
+        // level glow tint (cyan) + hit flash (pink), blended on top of the metal
+        if (lvl > 0.01f)
+        {
+            g.setColour (cyan.withAlpha (juce::jlimit (0.0f, 0.55f, lvl * 0.8f)));
+            g.fillRoundedRectangle (b, rad);
+        }
+        if (fl > 0.01f)
+        {
+            g.setColour (pink.withAlpha (fl * 0.8f));
+            g.fillRoundedRectangle (b, rad);
+        }
+
+        // specular sheen (top strip)
+        g.setColour (juce::Colours::white.withAlpha (0.06f));
+        g.fillRoundedRectangle (b.reduced (b.getWidth() * 0.10f, 0.0f).withHeight (b.getHeight() * 0.28f), rad * 0.6f);
+
+        // chrome / accent border
+        if (isDrag)      { g.setColour (yellow); g.drawRoundedRectangle (b, rad, 2.2f); }
+        else if (isSel)  { g.setColour (pink.withAlpha (0.22f)); g.drawRoundedRectangle (b.expanded (2.0f), rad + 1.0f, 3.0f);
+                           g.setColour (pink); g.drawRoundedRectangle (b, rad, 1.6f); }
+        else             { g.setColour (cyan.withAlpha (0.28f)); g.drawRoundedRectangle (b, rad, 1.0f); }
 
         // number
         g.setFont (theme::hud (9.0f, true));

@@ -115,12 +115,23 @@ void TopPanel::paint (juce::Graphics& g)
     glowText (g, MPC2077AudioProcessor::factoryPresetName (proc.getCurrentProgram()),
               d.reduced (8, 3).withTrimmedTop (13), juce::Colours::white, juce::Justification::centredLeft, 0.5f);
 
-    // --- logo badge + wordmark (centred) ---
+    // --- circular glow-ring badge + wordmark (centred) ---
     const int cx = getWidth() / 2 - 40;
+    const float bcx = (float) cx, bcy = 40.0f, brad = 34.0f;
+    for (int i = 3; i >= 1; --i)
+    {
+        g.setColour (cyan.withAlpha (0.05f * (float) i));
+        g.drawEllipse (bcx - brad - i * 2.0f, bcy - brad - i * 2.0f, (brad + i * 2.0f) * 2.0f, (brad + i * 2.0f) * 2.0f, 2.0f);
+    }
+    g.setColour (juce::Colour (0xFF0A0018));
+    g.fillEllipse (bcx - brad, bcy - brad, brad * 2.0f, brad * 2.0f);
+    g.setColour (cyan.withAlpha (0.7f));
+    g.drawEllipse (bcx - brad, bcy - brad, brad * 2.0f, brad * 2.0f, 1.4f);
     if (logo.isValid())
-        g.drawImageWithin (logo, cx - 40, 6, 72, 72, juce::RectanglePlacement::centred, false);
+        g.drawImageWithin (logo, (int) (bcx - brad), (int) (bcy - brad), (int) (brad * 2.0f), (int) (brad * 2.0f),
+                           juce::RectanglePlacement::centred, false);
 
-    auto wm = juce::Rectangle<int> (cx + 36, 14, 260, 40);
+    auto wm = juce::Rectangle<int> (cx + 46, 14, 260, 40);
     const float gj = (std::sin (phase * 6.0f) > 0.9f) ? 3.0f : 0.0f;
     g.setFont (theme::hud (30.0f, true));
     g.setColour (pink.withAlpha (0.55f)); g.drawText ("MPC2077", wm.translated ((int) gj, 0), juce::Justification::centredLeft, false);
@@ -128,7 +139,7 @@ void TopPanel::paint (juce::Graphics& g)
     g.setColour (textHi);                 g.drawText ("MPC2077", wm, juce::Justification::centredLeft, false);
     g.setFont (theme::hud (9.0f, true));
     g.setColour (pink);
-    g.drawText ("by Djbilbox BEATS", cx + 38, 52, 240, 12, juce::Justification::centredLeft, false);
+    g.drawText ("by Djbilbox BEATS", cx + 48, 52, 240, 12, juce::Justification::centredLeft, false);
 
     // VOL label
     g.setColour (cyan);

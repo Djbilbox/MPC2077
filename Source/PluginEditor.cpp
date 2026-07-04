@@ -93,7 +93,21 @@ void MPC2077AudioProcessorEditor::refreshForNewPatch()
 void MPC2077AudioProcessorEditor::paint (juce::Graphics& g)
 {
     g.fillAll (bg);
+
+    // two-tone split (APESHYT-style): a subtly lighter steel panel behind the
+    // right-hand knob column, distinct from the darker pad area on the left.
+    juce::Rectangle<int> rightPanel (572, 176, getWidth() - 572 - 8, getHeight() - 176 - 8);
+    g.setColour (panelHi.withAlpha (0.5f));
+    g.fillRoundedRectangle (rightPanel.toFloat(), 8.0f);
+    g.setColour (cyan.withAlpha (0.18f));
+    g.drawRoundedRectangle (rightPanel.toFloat(), 8.0f, 1.0f);
+
     circuitGrid (g, getLocalBounds().toFloat(), 34.0f);
+
+    // neon accent edge strip along the left side of the whole unit
+    juce::Rectangle<float> edge (0.0f, 86.0f, 4.0f, (float) getHeight() - 86.0f);
+    g.setGradientFill (juce::ColourGradient (pink, 0, edge.getY(), cyan, 0, edge.getBottom(), false));
+    g.fillRect (edge);
 
     // section title above the pad / sequencer area
     g.setFont (theme::hud (11.0f, true));

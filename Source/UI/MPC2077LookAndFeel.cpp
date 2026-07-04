@@ -18,42 +18,42 @@ void MPC2077LookAndFeel::drawRotarySlider (juce::Graphics& g, int x, int y, int 
                                            float sliderPos, float startAngle, float endAngle,
                                            juce::Slider&)
 {
-    auto bounds = juce::Rectangle<float> ((float) x, (float) y, (float) w, (float) h).reduced (6.0f);
+    // Minimal hardware-synth knob (APESHYT-style): flat dark disc, thin value arc,
+    // small pointer line. No big neon halo — just a crisp cyan/pink accent.
+    auto bounds = juce::Rectangle<float> ((float) x, (float) y, (float) w, (float) h).reduced (4.0f);
     const float r = juce::jmin (bounds.getWidth(), bounds.getHeight()) * 0.5f;
     const auto c = bounds.getCentre();
     const float angle = startAngle + sliderPos * (endAngle - startAngle);
 
-    // outer cyan halo ring
-    juce::Path ring;
-    ring.addCentredArc (c.x, c.y, r, r, 0.0f, startAngle, endAngle, true);
-    g.setColour (cyan.withAlpha (0.18f));
-    g.strokePath (ring, juce::PathStrokeType (2.0f));
-    for (int i = 3; i >= 1; --i)
-    {
-        g.setColour (cyan.withAlpha (0.06f * (float) i));
-        g.strokePath (ring, juce::PathStrokeType (2.0f + (float) i * 2.0f));
-    }
+    // thin background track (full sweep)
+    juce::Path track;
+    track.addCentredArc (c.x, c.y, r, r, 0.0f, startAngle, endAngle, true);
+    g.setColour (juce::Colours::white.withAlpha (0.08f));
+    g.strokePath (track, juce::PathStrokeType (2.2f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
 
-    // body disc
-    g.setColour (panelLo.brighter (0.05f));
-    g.fillEllipse (c.x - r * 0.72f, c.y - r * 0.72f, r * 1.44f, r * 1.44f);
-    g.setColour (cyan.withAlpha (0.55f));
-    g.drawEllipse (c.x - r * 0.72f, c.y - r * 0.72f, r * 1.44f, r * 1.44f, 1.2f);
-
-    // pink value arc
+    // pink value arc (thin, crisp — no glow bloom)
     juce::Path val;
     val.addCentredArc (c.x, c.y, r, r, 0.0f, startAngle, angle, true);
-    glowPath (g, val, pink, 2.6f, 0.9f);
+    g.setColour (pink);
+    g.strokePath (val, juce::PathStrokeType (2.2f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
 
-    // pointer
+    // flat dark disc body with subtle top-light / bottom-dark bevel
+    const float dr = r * 0.62f;
+    juce::ColourGradient bodyGrad (panelHi.brighter (0.04f), c.x, c.y - dr,
+                                   juce::Colour (0xFF060010), c.x, c.y + dr, false);
+    g.setGradientFill (bodyGrad);
+    g.fillEllipse (c.x - dr, c.y - dr, dr * 2.0f, dr * 2.0f);
+    g.setColour (juce::Colours::black.withAlpha (0.6f));
+    g.drawEllipse (c.x - dr, c.y - dr, dr * 2.0f, dr * 2.0f, 1.0f);
+    g.setColour (cyan.withAlpha (0.35f));
+    g.drawEllipse (c.x - dr + 0.6f, c.y - dr + 0.6f, dr * 2.0f - 1.2f, dr * 2.0f - 1.2f, 0.7f);
+
+    // small pointer line (cyan, crisp)
     juce::Path ptr;
-    ptr.startNewSubPath (c.x, c.y);
-    ptr.lineTo (c.x + std::sin (angle) * r * 0.66f, c.y - std::cos (angle) * r * 0.66f);
-    glowPath (g, ptr, cyan, 2.2f, 0.9f);
-
-    // hub
+    ptr.startNewSubPath (c.x + std::sin (angle) * dr * 0.30f, c.y - std::cos (angle) * dr * 0.30f);
+    ptr.lineTo (c.x + std::sin (angle) * dr * 0.86f, c.y - std::cos (angle) * dr * 0.86f);
     g.setColour (cyan);
-    g.fillEllipse (c.x - 2.4f, c.y - 2.4f, 4.8f, 4.8f);
+    g.strokePath (ptr, juce::PathStrokeType (2.0f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
 }
 
 //==============================================================================
