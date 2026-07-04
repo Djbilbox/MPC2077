@@ -1,0 +1,65 @@
+name: Build macOS AU & DMG
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          brew install cmake ninja
+
+      - name: Download JUCE
+        run: |
+          cd ~
+          git clone --depth 1 --branch 8.0.0 https://github.com/juce-framework/JUCE.git
+
+      - name: Configure CMake
+        run: |
+          cd ${{ github.workspace }}
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DJUCE_DIR=~/JUCE
+
+      - name: Build AU & Standalone
+        run: |
+          cd ${{ github.workspace }}/build
+          ninja
+
+      - name: Create DMG
+        run: |
+          VERSION="${{ github.ref }}" && VERSION="${VERSION#refs/tags/}"
+          DMG_NAME="MPC2077-macOS-${VERSION}.dmg"
+
+          # Create DMG structure
+          mkdir -p MPC2077_pkg/Applications
+          mkdir -p MPC2077_pkg/Library/Audio/Plug-Ins/Components
+
+          # Copy AU plugin
+          cp -r build/MPC2077_artefacts/Release/AU/MPC2077.component MPC2077_pkg/Library/Audio/Plug-Ins/Components/
+
+          # Copy Standalone
+          cp -r build/MPC2077_artefacts/Release/Standalone/MPC2077.app MPC2077_pkg/Applications/
+
+          # Copy manual
+          cp MANUAL.md README.md MPC2077_pkg/
+
+          # Create DMG
+          hdiutil create -volname "MPC2077" -srcfolder MPC2077_pkg -ov -format UDZO "$DMG_NAME"
+
+          echo "DMG_NAME=${DMG_NAME}" >> $GITHUB_ENV
+
+      - name: Upload Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: MPC2077-macOS-*.dmg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

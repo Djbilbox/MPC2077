@@ -1,0 +1,53 @@
+name: Build Windows VST3 & Standalone
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          choco install cmake ninja -y
+
+      - name: Download JUCE
+        run: |
+          mkdir -p C:\JUCE
+          cd C:\
+          git clone --depth 1 --branch 8.0.0 https://github.com/juce-framework/JUCE.git
+
+      - name: Configure CMake
+        run: |
+          cd ${{ github.workspace }}
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DJUCE_DIR=C:\JUCE
+
+      - name: Build
+        run: |
+          cd ${{ github.workspace }}\build
+          ninja
+
+      - name: Create Windows ZIP
+        run: |
+          $version = "${{ github.ref }}" -replace 'refs/tags/', ''
+          $zipName = "MPC2077-Windows-$version.zip"
+          Compress-Archive -Path "${{ github.workspace }}\build\MPC2077_artefacts\Release\Standalone\MPC2077.exe", `
+                                   "${{ github.workspace }}\MANUAL.md", `
+                                   "${{ github.workspace }}\README.md" `
+                           -DestinationPath $zipName
+          Write-Output "ZIP_NAME=$zipName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Upload Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: MPC2077-Windows-*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
