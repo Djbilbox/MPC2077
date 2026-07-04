@@ -98,3 +98,11 @@ target_link_libraries(MPC2077 PRIVATE
     juce::juce_recommended_lto_flags
     juce::juce_recommended_warning_flags
 )
+
+# --- Standalone: DPI-unaware manifest so the window sizes correctly at 150% DPI ---
+# (JUCE's standalone wrapper mis-sizes the editor on HiDPI displays; the DAW/VST3 is unaffected.)
+if(MSVC AND TARGET MPC2077_Standalone)
+    target_link_options(MPC2077_Standalone PRIVATE
+        "/MANIFEST:EMBED"
+        "/MANIFESTINPUT:${CMAKE_CURRENT_SOURCE_DIR}/assets/Standalone.manifest")
+endif()
