@@ -6,7 +6,7 @@ namespace mpc
     static constexpr int   kMaxSteps  = 32;   // sequencer resolution ceiling
     static constexpr int   kNumVoices = 24;   // polyphony (pads can overlap)
     static constexpr int   kBaseMidiNote = 36; // pad 0 = C1 (GM kick), pad i = 36+i
-    static constexpr int   FactoryPresetCount = 10;
+    static constexpr int   FactoryPresetCount = 50;
 
     // Parameter IDs (global / automatable — APVTS)
     namespace pid

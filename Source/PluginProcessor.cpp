@@ -10,9 +10,26 @@ namespace
     const char* kModeChoices[] = { "CHOP", "SLICE", "BEAT", "SEQ", "GLITCH", "CYBER" };
 
     const char* kPresetNames[FactoryPresetCount] = {
+        // 0-9
         "Night City 808", "Corpo Beat Chop", "Arasaka Slam", "Johnny Silverhand Groove",
         "Netrunner Sequence", "Ghost In The Grid", "Blade Runner Trap", "Neon Rain Bounce",
-        "Cyber Monk Slice", "Zero Day Glitch"
+        "Cyber Monk Slice", "Zero Day Glitch",
+        // 10-19
+        "Tokyo Neon Dream", "Hacker's Pulse", "Synth Wave Drift", "Digital Samurai",
+        "Pixel Noir Bounce", "Data Storm", "Chrome Sunset", "Retro Future Beat",
+        "Glitch City Groove", "Acid Rain Loop",
+        // 20-29
+        "Velvet Thunder", "Neon Genesis", "Cyberpunk Stomp", "Electric Vice",
+        "Synth Explosion", "Dark Matter Kick", "Neo Tokyo Drive", "Void Walker",
+        "Neon Pulse", "Retro Synth Wave",
+        // 30-39
+        "Fever Dream", "Laser Beat", "Synth Breaker", "Cosmic Bounce",
+        "Digital Heat", "Neon Lights", "Thunder Road", "Synth Killer",
+        "Cyber Bounce", "Electric Surge",
+        // 40-49
+        "Pulsing Core", "Neon Frenzy", "Digital Breakdown", "Synth Prophet",
+        "Glitch Funk", "Neon Carnival", "Synth Horizon", "Electric Monk",
+        "Retro Digital", "Future Shock"
     };
 }
 
@@ -279,6 +296,206 @@ void MPC2077AudioProcessor::applyFactoryPreset (int index)
             setRow (sequencer, 2, "....x.......x...");
             setRow (sequencer, 15, "x.x.x.x.x.x.x.x.");
             gli = 0.55f; cru = 0.3f; mode = 4.0f; break;
+        case 10: // Tokyo Neon Dream
+            setRow (sequencer, 0, "x.x.x.x.x.x.x.x.");
+            setRow (sequencer, 2, "..x.....x.x.....");
+            setRow (sequencer, 5, "....x.......x...");
+            rvb = 0.4f; dly = 0.3f; break;
+        case 11: // Hacker's Pulse
+            setRow (sequencer, 0, "x..x..x...x.x...");
+            setRow (sequencer, 3, "....x.x.....x...");
+            setRow (sequencer, 4, "x.x.x.x.x.x.x.x.");
+            cru = 0.25f; gli = 0.3f; break;
+        case 12: // Synth Wave Drift
+            setRow (sequencer, 1, "x.......x.......");
+            setRow (sequencer, 2, "....x.......x...");
+            setRow (sequencer, 5, "..x...x...x...x.");
+            dly = 0.35f; rvb = 0.45f; break;
+        case 13: // Digital Samurai
+            setRow (sequencer, 0, "x...x..x...x...x");
+            setRow (sequencer, 2, ".x.x.x.x.x.x.x.x");
+            setRow (sequencer, 4, "x.x.x.x.......");
+            swing = 0.25f; break;
+        case 14: // Pixel Noir Bounce
+            setRow (sequencer, 0, "x..x..x..x..x..x");
+            setRow (sequencer, 2, "....x.......x...");
+            setRow (sequencer, 5, ".x.x.x.x.x.x.x.");
+            swing = 0.35f; dly = 0.2f; break;
+        case 15: // Data Storm
+            setRow (sequencer, 0, "x.x...x.x.x...x.");
+            setRow (sequencer, 3, "........x.......");
+            setRow (sequencer, 4, "x.x.x.x.x.x.x.x.");
+            gli = 0.4f; cru = 0.2f; break;
+        case 16: // Chrome Sunset
+            setRow (sequencer, 0, "x.....x.x.....x.");
+            setRow (sequencer, 2, "....x.......x...");
+            setRow (sequencer, 12, "..x...x...x...x.");
+            rvb = 0.35f; dly = 0.25f; break;
+        case 17: // Retro Future Beat
+            setRow (sequencer, 0, "x..x..x...x..x..");
+            setRow (sequencer, 2, "....x.......x...");
+            setRow (sequencer, 4, "xxxxxxxxxxxxxxxx");
+            swing = 0.2f; break;
+        case 18: // Glitch City Groove
+            setRow (sequencer, 0, "x...x...x...x...");
+            setRow (sequencer, 2, ".x.x.x.x.x.x.x.");
+            setRow (sequencer, 15, "x.x.x.x.x.x.x.x.");
+            gli = 0.35f; cru = 0.35f; break;
+        case 19: // Acid Rain Loop
+            setRow (sequencer, 0, "x.......x.......");
+            setRow (sequencer, 2, "....x.......x...");
+            setRow (sequencer, 13, "xxxxxxxxxxxx....");
+            dly = 0.4f; rvb = 0.3f; break;
+        case 20: // Velvet Thunder
+            setRow (sequencer, 0, "x.x.x...x.x.x...");
+            setRow (sequencer, 2, "....x.x.....x.x.");
+            setRow (sequencer, 5, "x.x.x.x.x.x.x.x.");
+            rvb = 0.25f; swing = 0.15f; break;
+        case 21: // Neon Genesis
+            setRow (sequencer, 0, "x..x..x..x..x..x");
+            setRow (sequencer, 3, "....x.......x...");
+            setRow (sequencer, 4, "x.x.x.x.x.x.x.x.");
+            mode = 2.0f; dly = 0.2f; break;
+        case 22: // Cyberpunk Stomp
+            setRow (sequencer, 0, "x...x...x...x...");
+            setRow (sequencer, 2, "..x.x.x.x.x.x.x.");
+            setRow (sequencer, 4, "x.x.x.x.x.x.x.x.");
+            cyb = 0.25f; break;
+        case 23: // Electric Vice
+            setRow (sequencer, 0, "x.x.x.x.x.x.x.x.");
+            setRow (sequencer, 2, "....x.......x...");
+            setRow (sequencer, 3, ".x.x.x.x.x.x.x.");
+            swing = 0.3f; break;
+        case 24: // Synth Explosion
+            setRow (sequencer, 0, "x...x...x...x...");
+            setRow (sequencer, 2, ".x.x.x.x.x.x.x.");
+            setRow (sequencer, 5, "x.x.x.x.x.x.x.x.");
+            rvb = 0.5f; break;
+        case 25: // Dark Matter Kick
+            setRow (sequencer, 0, "x.......x.......");
+            setRow (sequencer, 1, "..x...x...x...x.");
+            setRow (sequencer, 2, "....x.......x...");
+            gli = 0.2f; break;
+        case 26: // Neo Tokyo Drive
+            setRow (sequencer, 0, "x.x.x...x.x...x.");
+            setRow (sequencer, 2, "....x.x.....x.x.");
+            setRow (sequencer, 4, "x.x.x.x.x.x.x.x.");
+            dly = 0.3f; break;
+        case 27: // Void Walker
+            setRow (sequencer, 0, "x...x.x.x...x.x.");
+            setRow (sequencer, 3, "........x.......");
+            setRow (sequencer, 5, "..x...x...x...x.");
+            cyb = 0.3f; rvb = 0.4f; break;
+        case 28: // Neon Pulse
+            setRow (sequencer, 0, "x..x..x..x..x..x");
+            setRow (sequencer, 2, ".x.x.x.x.x.x.x.");
+            setRow (sequencer, 4, "x.x.x.x.x.x.x.x.");
+            mode = 3.0f; break;
+        case 29: // Retro Synth Wave
+            setRow (sequencer, 0, "x.......x.......");
+            setRow (sequencer, 2, "....x.......x...");
+            setRow (sequencer, 13, "x.x.x.x.x.x.x.x.");
+            rvb = 0.45f; dly = 0.35f; break;
+        case 30: // Fever Dream
+            setRow (sequencer, 0, "x.x...x.x.x...x.");
+            setRow (sequencer, 2, "....x.x.....x.x.");
+            setRow (sequencer, 5, "x.x.x.x.x.x.x.x.");
+            swing = 0.25f; break;
+        case 31: // Laser Beat
+            setRow (sequencer, 0, "x...x...x...x...");
+            setRow (sequencer, 3, ".x.x.x.x.x.x.x.");
+            setRow (sequencer, 4, "x.x.x.x.x.x.x.x.");
+            cyb = 0.2f; gli = 0.25f; break;
+        case 32: // Synth Breaker
+            setRow (sequencer, 0, "x..x..x...x..x..");
+            setRow (sequencer, 2, "....x.......x...");
+            setRow (sequencer, 4, "xxxxxxxxxxxxxxxx");
+            cru = 0.2f; break;
+        case 33: // Cosmic Bounce
+            setRow (sequencer, 0, "x..x..x..x..x..x");
+            setRow (sequencer, 3, "....x.......x...");
+            setRow (sequencer, 5, "..x...x...x...x.");
+            dly = 0.25f; rvb = 0.35f; break;
+        case 34: // Digital Heat
+            setRow (sequencer, 0, "x.x.x.x.x.x.x.x.");
+            setRow (sequencer, 2, "....x.......x...");
+            setRow (sequencer, 3, ".x.x.x.x.x.x.x.");
+            gli = 0.3f; break;
+        case 35: // Neon Lights
+            setRow (sequencer, 0, "x...x...x...x...");
+            setRow (sequencer, 2, ".x.x.x.x.x.x.x.");
+            setRow (sequencer, 4, "x.x.x.x.x.x.x.x.");
+            rvb = 0.3f; mode = 4.0f; break;
+        case 36: // Thunder Road
+            setRow (sequencer, 0, "x.......x.......");
+            setRow (sequencer, 2, "....x.x.....x.x.");
+            setRow (sequencer, 4, "x.x.x.x.x.x.x.x.");
+            swing = 0.2f; dly = 0.2f; break;
+        case 37: // Synth Killer
+            setRow (sequencer, 0, "x..x..x...x..x..");
+            setRow (sequencer, 3, "........x.......");
+            setRow (sequencer, 4, "x.x.x.x.x.x.x.x.");
+            cru = 0.3f; break;
+        case 38: // Cyber Bounce
+            setRow (sequencer, 0, "x..x..x..x..x..x");
+            setRow (sequencer, 2, "....x.......x...");
+            setRow (sequencer, 5, "x.x.x.x.x.x.x.x.");
+            cyb = 0.35f; break;
+        case 39: // Electric Surge
+            setRow (sequencer, 0, "x.x...x.x.x...x.");
+            setRow (sequencer, 2, ".x.x.x.x.x.x.x.");
+            setRow (sequencer, 4, "x.x.x.x.x.x.x.x.");
+            rvb = 0.4f; break;
+        case 40: // Pulsing Core
+            setRow (sequencer, 0, "x...x...x...x...");
+            setRow (sequencer, 3, "....x.......x...");
+            setRow (sequencer, 5, "..x...x...x...x.");
+            dly = 0.3f; break;
+        case 41: // Neon Frenzy
+            setRow (sequencer, 0, "x.x.x...x.x.x...");
+            setRow (sequencer, 2, "....x.x.....x.x.");
+            setRow (sequencer, 4, "xxxxxxxxxxxxxxxx");
+            gli = 0.25f; break;
+        case 42: // Digital Breakdown
+            setRow (sequencer, 0, "x..x..x..x..x..x");
+            setRow (sequencer, 2, ".x.x.x.x.x.x.x.");
+            setRow (sequencer, 5, "x.x.x.x.x.x.x.x.");
+            mode = 5.0f; break;
+        case 43: // Synth Prophet
+            setRow (sequencer, 0, "x.......x.......");
+            setRow (sequencer, 3, "........x.......");
+            setRow (sequencer, 4, "x.x.x.x.x.x.x.x.");
+            rvb = 0.35f; dly = 0.25f; break;
+        case 44: // Glitch Funk
+            setRow (sequencer, 0, "x...x...x...x...");
+            setRow (sequencer, 2, "....x.......x...");
+            setRow (sequencer, 15, "x.x.x.x.x.x.x.x.");
+            gli = 0.4f; cru = 0.2f; break;
+        case 45: // Neon Carnival
+            setRow (sequencer, 0, "x..x..x..x..x..x");
+            setRow (sequencer, 3, "....x.x.....x.x.");
+            setRow (sequencer, 4, "x.x.x.x.x.x.x.x.");
+            swing = 0.3f; break;
+        case 46: // Synth Horizon
+            setRow (sequencer, 0, "x.x.x.x.x.x.x.x.");
+            setRow (sequencer, 2, "....x.......x...");
+            setRow (sequencer, 5, "..x...x...x...x.");
+            cyb = 0.2f; rvb = 0.3f; break;
+        case 47: // Electric Monk
+            setRow (sequencer, 0, "x...x.x.x...x.x.");
+            setRow (sequencer, 2, ".x.x.x.x.x.x.x.");
+            setRow (sequencer, 4, "x.x.x.x.x.x.x.x.");
+            dly = 0.35f; break;
+        case 48: // Retro Digital
+            setRow (sequencer, 0, "x..x..x...x..x..");
+            setRow (sequencer, 3, "....x.......x...");
+            setRow (sequencer, 5, "x.x.x.x.x.x.x.x.");
+            mode = 1.0f; break;
+        case 49: // Future Shock
+            setRow (sequencer, 0, "x.x...x.x.x...x.");
+            setRow (sequencer, 2, "....x.x.....x.x.");
+            setRow (sequencer, 4, "x.x.x.x.x.x.x.x.");
+            gli = 0.35f; break;
         default: break;
     }
 
