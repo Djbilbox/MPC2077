@@ -1,7 +1,41 @@
 #include "DrumEngine.h"
 #include "DrumSynth.h"
 
+#if MPC_HAS_BINARY_DATA
+ #include "BinaryData.h"
+#endif
+
 using namespace mpc;
+
+namespace
+{
+#if MPC_HAS_BINARY_DATA
+    struct Emb { const char* data; int size; };
+    // pad index -> embedded factory WAV (generic names in assets/samples/)
+    Emb embeddedForPad (int i)
+    {
+        switch (i)
+        {
+            case 0:  return { BinaryData::kick_wav,    BinaryData::kick_wavSize };
+            case 1:  return { BinaryData::sub_wav,     BinaryData::sub_wavSize };
+            case 2:  return { BinaryData::snare_wav,   BinaryData::snare_wavSize };
+            case 3:  return { BinaryData::clap_wav,    BinaryData::clap_wavSize };
+            case 4:  return { BinaryData::clhat_wav,   BinaryData::clhat_wavSize };
+            case 5:  return { BinaryData::ophat_wav,   BinaryData::ophat_wavSize };
+            case 6:  return { BinaryData::lowtom_wav,  BinaryData::lowtom_wavSize };
+            case 7:  return { BinaryData::midtom_wav,  BinaryData::midtom_wavSize };
+            case 8:  return { BinaryData::hitom_wav,   BinaryData::hitom_wavSize };
+            case 9:  return { BinaryData::rim_wav,     BinaryData::rim_wavSize };
+            case 10: return { BinaryData::crash_wav,   BinaryData::crash_wavSize };
+            case 11: return { BinaryData::ride_wav,    BinaryData::ride_wavSize };
+            case 12: return { BinaryData::clav_wav,    BinaryData::clav_wavSize };
+            case 13: return { BinaryData::cowbell_wav, BinaryData::cowbell_wavSize };
+            case 14: return { BinaryData::conga_wav,   BinaryData::conga_wavSize };
+            default: return { BinaryData::snap_wav,    BinaryData::snap_wavSize };
+        }
+    }
+#endif
+}
 
 //==============================================================================
 DrumEngine::DrumEngine()
@@ -17,11 +51,12 @@ void DrumEngine::prepare (double sampleRate, int /*blockSize*/)
     sr = sampleRate;
     for (auto& v : voices) { v.env.setSampleRate (sr); v.kill(); }
 
-    // Re-render the procedural kit at the new host rate so pitch stays correct.
+    // Re-render only procedural pads at the new host rate (embedded/user samples
+    // carry their own sourceRate and are resampled on playback).
     if (rateChanged)
         for (int i = 0; i < kNumPads; ++i)
-            if (! pads[(size_t) i].isUserSample)
-                resetPadToDefault (i);
+            if (pads[(size_t) i].isProcedural)
+                loadFactoryPad (i);
 }
 
 void DrumEngine::reset()
@@ -33,32 +68,48 @@ void DrumEngine::reset()
 //==============================================================================
 void DrumEngine::loadDefaultKit()
 {
-    std::array<juce::AudioBuffer<float>, kNumPads> kit;
-    DrumSynth::renderKit (kit, sr);
     for (int i = 0; i < kNumPads; ++i)
+        loadFactoryPad (i);
+}
+
+void DrumEngine::loadFactoryPad (int padIndex)
+{
+    const int i = juce::jlimit (0, kNumPads - 1, padIndex);
+    auto& p = pads[(size_t) i];
+    p.name        = DrumSynth::defaultName (i);
+    p.chokeGroup  = DrumSynth::defaultChoke (i);
+    p.sampleName  = {};
+    p.filePath    = {};
+    p.isUserSample = false;
+
+#if MPC_HAS_BINARY_DATA
+    auto e = embeddedForPad (i);
+    if (e.data != nullptr && e.size > 0)
     {
-        auto& p = pads[(size_t) i];
-        p.sample = std::move (kit[(size_t) i]);
-        p.sourceRate = sr;
-        p.name = DrumSynth::defaultName (i);
-        p.sampleName = {};
-        p.filePath = {};
-        p.isUserSample = false;
-        p.chokeGroup = DrumSynth::defaultChoke (i);
+        std::unique_ptr<juce::AudioFormatReader> r (
+            formatManager.createReaderFor (std::make_unique<juce::MemoryInputStream> (e.data, (size_t) e.size, false)));
+        if (r != nullptr && r->lengthInSamples > 0)
+        {
+            const int len   = (int) juce::jmin ((juce::int64) (sr * 10.0), r->lengthInSamples);
+            const int chans = (int) juce::jmin (2u, r->numChannels);
+            p.sample.setSize (chans, len);
+            r->read (&p.sample, 0, len, 0, true, chans > 1);
+            p.sourceRate  = r->sampleRate > 0 ? r->sampleRate : sr;
+            p.isProcedural = false;
+            return;
+        }
     }
+#endif
+
+    // procedural fallback (rate-dependent)
+    DrumSynth::renderPad (i, p.sample, sr);
+    p.sourceRate   = sr;
+    p.isProcedural = true;
 }
 
 void DrumEngine::resetPadToDefault (int padIndex)
 {
-    const int i = juce::jlimit (0, kNumPads - 1, padIndex);
-    auto& p = pads[(size_t) i];
-    DrumSynth::renderPad (i, p.sample, sr);
-    p.sourceRate  = sr;
-    p.name        = DrumSynth::defaultName (i);
-    p.sampleName  = {};
-    p.filePath    = {};
-    p.isUserSample = false;
-    p.chokeGroup  = DrumSynth::defaultChoke (i);
+    loadFactoryPad (padIndex);
 }
 
 bool DrumEngine::loadSampleIntoPad (int padIndex, const juce::File& file)
@@ -78,6 +129,7 @@ bool DrumEngine::loadSampleIntoPad (int padIndex, const juce::File& file)
     p.sample = std::move (buf);
     p.sourceRate = reader->sampleRate > 0 ? reader->sampleRate : sr;
     p.isUserSample = true;
+    p.isProcedural = false;
     p.filePath = file.getFullPathName();
     p.sampleName = file.getFileName();
     p.name = file.getFileNameWithoutExtension().toUpperCase().substring (0, 10);

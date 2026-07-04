@@ -96,21 +96,18 @@ void MPC2077AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
 
     // --- read parameters ---
     auto pval = [this] (const char* id) { return apvts.getRawParameterValue (id)->load(); };
-    const float master   = pval (pid::master);
-    const float pitchW    = pval (pid::pitchWheel);
-    const float modW      = pval (pid::modWheel);
-    const int   mode      = (int) pval (pid::mode);
+    const float master = pval (pid::master);
 
-    engine.setGlobalPitchSemis (pitchW * 12.0f);
+    engine.setGlobalPitchSemis (pval (pid::pitchWheel) * 12.0f);
     sequencer.setSwing (pval (pid::swing));
     sequencer.setHumanize (pval (pid::humanize));
 
     FxChain::Params fxp;
     fxp.reverb = pval (pid::fxReverb);
-    fxp.glitch = juce::jlimit (0.0f, 1.0f, pval (pid::fxGlitch) + (mode == 4 ? 0.4f : 0.0f));
+    fxp.glitch = pval (pid::fxGlitch);
     fxp.crush  = pval (pid::fxCrush);
     fxp.delay  = pval (pid::fxDelay);
-    fxp.cyber  = juce::jlimit (0.0f, 1.0f, pval (pid::fxCyber) + modW * 0.6f + (mode == 5 ? 0.4f : 0.0f));
+    fxp.cyber  = pval (pid::fxCyber);
 
     // --- transport ---
     StepSequencer::Transport tr;

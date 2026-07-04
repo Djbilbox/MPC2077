@@ -15,6 +15,7 @@ struct PadSettings
     juce::AudioBuffer<float> sample;         // mono or stereo source
     double sourceRate = 44100.0;
     bool   isUserSample = false;
+    bool   isProcedural = true;   // true = synthesized fallback (rate-dependent)
 
     // pitch
     float pitchSemis = 0.0f;   // -24..24
@@ -166,6 +167,7 @@ public:
 
     // --- kit management ---
     void loadDefaultKit();
+    void loadFactoryPad (int padIndex);   // embedded sample if available, else procedural
     void resetPadToDefault (int padIndex);
     bool loadSampleIntoPad (int padIndex, const juce::File& file);
 

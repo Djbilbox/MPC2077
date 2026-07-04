@@ -8,12 +8,14 @@ project(MPC2077 VERSION 1.0.0)
 set(JUCE_DIR "C:/JUCE" CACHE PATH "JUCE root")
 add_subdirectory(${JUCE_DIR} JUCE)
 
-# Optional embedded design assets (logo / city). Only added if present so the
-# project always configures even before the artwork is baked in.
+# Optional embedded assets (logo + factory drum samples). Only added if present so
+# the project always configures even before the artwork/samples are baked in.
 set(MPC_BINARY_SOURCES "")
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/assets/logo.png")
     list(APPEND MPC_BINARY_SOURCES assets/logo.png)
 endif()
+file(GLOB MPC_SAMPLE_WAVS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "assets/samples/*.wav")
+list(APPEND MPC_BINARY_SOURCES ${MPC_SAMPLE_WAVS})
 
 if(MPC_BINARY_SOURCES)
     juce_add_binary_data(MpcBinaryData SOURCES ${MPC_BINARY_SOURCES})
@@ -47,13 +49,10 @@ target_sources(MPC2077 PRIVATE
     Source/DSP/DrumSynth.cpp
     Source/UI/MPC2077LookAndFeel.cpp
     Source/UI/Components/PadGrid.cpp
-    Source/UI/Components/FxRack.cpp
-    Source/UI/Components/PresetBank.cpp
     Source/UI/Components/SequencerView.cpp
-    Source/UI/Components/ModeBar.cpp
-    Source/UI/Components/TouchRibbon.cpp
-    Source/UI/Components/CityBackdrop.cpp
-    Source/UI/Components/ControlPanel.cpp
+    Source/UI/Components/TopPanel.cpp
+    Source/UI/Components/MixerStrip.cpp
+    Source/UI/Components/ControlSection.cpp
 )
 
 target_include_directories(MPC2077 PRIVATE Source)

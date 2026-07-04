@@ -31,13 +31,25 @@
 - [x] Sample playback engine (16 polyphonic voices)
 - [x] 16 UI pads with custom neon LookAndFeel
 - [x] Drag & drop sample onto pad + file browser (double-click)
-- [x] Step sequencer (16/32 steps) + host transport sync  (engine done; step-EDIT UI still TODO)
+- [x] Step sequencer (16/32 steps) + host transport sync + step-edit UI (SEQ view)
 - [x] ADSR + filter + pitch per pad
 - [x] FX: saturation, delay, reverb, bitcrush, glitch, cyber wah (master bus + per-pad sends)
 - [x] Preset system (factory programs + save/load user .mpcpreset via ValueTree)
-- [ ] UI polish (step-sequencer editor view, VU meters, waveform display, animations)
+- [x] Real embedded drum kit (16x 808/909/707 one-shots from the FL library)
+- [x] Real neon camel logo baked in (checkerboard->alpha)
+- [x] APESHYT-style layout redesign (MPC2077 branding + cyberpunk colors)
+- [ ] Fix Standalone 150%-DPI window sizing (DPI-unaware manifest, like VICE CITY)
+- [ ] UI polish (VU meters, waveform display, more animation)
 - [ ] Stability tests (CPU, memory leaks, sample edge cases)
 - [ ] Final VST3 build (+ AU if macOS available) + installer packaging
+
+## UI (redesign — APESHYT disposition, 980x620)
+- TopPanel: LCD preset display + `<`/`>` nav (+ popup list) · SAVE/LOAD/INIT/SEQ · logo+wordmark · master VOL knob.
+- MixerStrip: 16 per-pad level knobs (short labels KK/808/SN/...); knob drag selects that pad.
+- PadGrid: 4x4 big pads (drag&drop + double-click browse). SEQ button swaps it for SequencerView.
+- Right column knob banks (reusable `ControlSection`): ENVELOPE (A/D/S/R), TONE (PITCH/FILTER/RESO/DRIVE) = selected pad; FX (REVERB/DELAY/CRUSH/GLITCH/CYBER) = master APVTS.
+- Removed old components: ModeBar, ControlPanel, FxRack, PresetBank, TouchRibbon, CityBackdrop.
+- Real kit pad names: KICK 808 SNARE CLAP CL-HAT OP-HAT LOW/MID/HI-TOM RIM CRASH RIDE CLAV COWBELL CONGA SNAP.
 
 ## Journal
 ### 2026-07-02 — Session 1 (Init + core)

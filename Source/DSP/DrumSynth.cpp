@@ -55,10 +55,10 @@ namespace
 juce::String DrumSynth::defaultName (int pad)
 {
     static const char* names[kNumPads] = {
-        "KICK", "SUB KICK", "SNARE", "CLAP",
+        "KICK", "808", "SNARE", "CLAP",
         "CL HAT", "OP HAT", "LOW TOM", "MID TOM",
         "HI TOM", "RIM", "CRASH", "RIDE",
-        "ZAP", "COWBELL", "LASER", "NOISE"
+        "CLAV", "COWBELL", "CONGA", "SNAP"
     };
     return juce::String (names[juce::jlimit (0, kNumPads - 1, pad)]);
 }
