@@ -37,9 +37,9 @@
 - [x] Preset system (factory programs + save/load user .mpcpreset via ValueTree)
 - [x] Real embedded drum kit (16x 808/909/707 one-shots from the FL library)
 - [x] Real neon camel logo baked in (checkerboard->alpha)
-- [x] APESHYT-style layout redesign (MPC2077 branding + cyberpunk colors)
+- [x] Layout redesign (MPC2077 branding + cyberpunk colors)
 - [x] Fix Standalone 150%-DPI window sizing (DPI-unaware manifest, like VICE CITY)
-- [x] APESHYT-inspired UI styling (minimalist hardware knobs, glossy pads, circular logo badge, two-tone panel, accent edge)
+- [x] UI styling hardware-synth minimaliste (potards épurés, pads biseautés glossy, badge logo circulaire, two-tone panel, bande accent)
 - [ ] UI polish (VU meters, waveform display, more animation) — **optional**
 - [ ] Stability tests (CPU, memory leaks, sample edge cases) — **optional**
 - [ ] Final VST3 build + installer packaging — **optional**
@@ -69,8 +69,9 @@
 - LANGUAGE: user asked that everything be produced in English. Converted this journal to English;
   code comments were already English. TODO: translate the French strings in `install_vst3_admin.bat`.
 
-### 2026-07-04 — Session 5 (APESHYT styling refinement)
-- User provided an APESHYT Drum VST reference screenshot and requested UI redesign matching that aesthetic.
+### 2026-07-04 — Session 5 (UI styling hardware-synth)
+- User showed une reference hardware drum VST et demanda un redesign du UI s'inspirant du style minimaliste
+  (potards épurés, pas de grosses glows, matière glossy 3D) mais en gardant les couleurs cyberpunk MPC2077.
 - Redesigned all neon glows to **minimalist hardware-synth style**: smaller knobs with thin pink value arcs
   + flat disc bodies (no big cyan halos), crisp pointer lines, no glow blooms.
 - Redesigned pads from flat neon boxes to **glossy 3D beveled** gradients with contact shadows and specular sheen.
@@ -79,7 +80,7 @@
 - Added **neon gradient accent edge strip** along the left side (pink→cyan).
 - Shrunk mixer knobs to fixed minimal hardware size, centered in their column cells.
 - Build: clean (exit 0). Screenshot verified all changes applied correctly.
-- Commit: 42a70c3 — "APESHYT-inspired UI redesign: minimalist hardware knobs, glossy 3D pads, circular logo badge, two-tone panel"
+- Commit: 42a70c3 — "UI redesign: hardware-synth minimaliste avec matière glossy, potards épurés, badge circulaire"
 
 **Status: Core plugin fully implemented and styled. All user-requested features complete.**
 
